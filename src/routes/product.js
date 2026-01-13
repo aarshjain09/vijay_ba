@@ -16,9 +16,10 @@ router.post(
   "/",
   auth,
   admin,
-  upload.single("image"),
   productController.createProduct
 );
+
+
 
 // Update price / pcs-per-box
 router.put(

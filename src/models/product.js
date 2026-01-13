@@ -5,15 +5,14 @@ const productSchema = new mongoose.Schema({
   pricePerPiece: Number,
   piecesPerBox: Number,
   boxPrice: Number,
-  stockBoxes: {
-    type: Number,
-    default: 0
-  },
-  stockPieces: {
-    type: Number,
-    default: 0
-  },
-  image: String
+  stockBoxes: Number,
+  stockPieces: Number,
+  image: String,
+  isActive: {
+    type: Boolean,
+    default: true
+  }
 });
+
 
 module.exports = mongoose.model("Product", productSchema);

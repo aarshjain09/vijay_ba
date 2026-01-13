@@ -1,27 +1,34 @@
 const multer = require("multer");
-const path = require("path");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("./cloudinary");
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/products");
-  },
-  filename: (req, file, cb) => {
-    cb(
-      null,
-      Date.now() + path.extname(file.originalname)
-    );
-  },
-});
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: (req, file) => {
+    return {
+      folder: "products",
 
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image/")) {
-    cb(null, true);
-  } else {
-    cb(new Error("Only images allowed"), false);
+      // ✅ Force valid image format
+      format: file.mimetype === "image/png"
+        ? "png"
+        : file.mimetype === "image/jpeg"
+        ? "jpg"
+        : "jpg",
+
+      // ✅ Stable public ID
+      public_id: `${Date.now()}-${file.originalname
+        .split(".")[0]
+        .replace(/\s+/g, "-")}`,
+
+      resource_type: "image",
+      access_mode: "public"
+    };
   }
-};
-
-module.exports = multer({
-  storage,
-  fileFilter,
 });
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB
+});
+
+module.exports = upload;
